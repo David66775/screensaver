@@ -22,6 +22,7 @@
       font-size: 20px;
       padding: 10px 20px;
       z-index: 10;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -40,9 +41,14 @@
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      columns = 200; // characters per line
+
+      // Compute dynamic columns and rows based on font size
+      columns = Math.floor(canvas.width / fontSize);
       rows = Math.floor(canvas.height / fontSize);
+
+      // Initialize the screen with random binary lines
       lines = Array(rows).fill('').map(() => generateLine());
+
       ctx.font = fontSize + "px monospace";
       ctx.fillStyle = "#00ff00";
     }
@@ -57,13 +63,13 @@
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
       for (let i = 0; i < lines.length; i++) {
-        // Slight random horizontal shift for burn-in prevention
-        const xOffset = Math.floor(Math.random() * 3); // 0-2 px shift
-        ctx.fillText(lines[i], xOffset, i * fontSize);
+        const xOffset = Math.floor(Math.random() * 3); // slight horizontal jitter
+        ctx.fillText(lines[i], xOffset, (i + 1) * fontSize);
       }
 
-      // Add new line at bottom and remove top line
+      // Scroll: remove top line, add a new random line at the bottom
       lines.push(generateLine());
       if (lines.length > rows) lines.shift();
     }
@@ -72,15 +78,17 @@
     resizeCanvas();
 
     startBtn.addEventListener('click', () => {
+      // Request fullscreen
       if (document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen();
       } else if (document.documentElement.webkitRequestFullscreen) {
         document.documentElement.webkitRequestFullscreen();
       }
+
       startBtn.style.display = "none";
       document.body.classList.add("inviscursor");
 
-      // Draw every 100ms, same speed as original
+      // Draw every 100ms (adjustable)
       setInterval(draw, 100);
     });
   </script>
