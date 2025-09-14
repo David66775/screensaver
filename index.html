@@ -2,24 +2,28 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Binary Screensaver</title>
+    <title>Binary Screensaver Fullscreen</title>
     <style>
-      html {
-        overflow: hidden;
-      } 
-      body {
+      html, body {
         margin: 0;
-        background: black;       /* whole page background black */
-        color: #00ff00;          /* green text */
-        font-family: monospace;
-        overflow: hidden;
-      }
-      #main {
-        margin: 0;
-        white-space: pre;
-        overflow: hidden;
+        padding: 0;
         width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: black;
+        color: #00ff00;
+        font-family: monospace;
       }
+
+      #main {
+        width: 100%;
+        height: 100%;
+        white-space: pre;
+        font-size: 14px;
+        line-height: 16px;
+        margin: 0;
+      }
+
       ::-webkit-scrollbar {
         display: none;
       }
@@ -27,26 +31,44 @@
   </head>
   <body>
     <div id="main"></div>
+    <button id="startBtn" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;padding:10px 20px;">
+      Start Fullscreen
+    </button>
 
     <script>
-      let body = document.getElementById("main");
+      const out = document.getElementById("main");
+      const startBtn = document.getElementById("startBtn");
+      const lines = [];
 
       function drawline() {
         let line = "";
         for (let i = 0; i < 200; i++) {
           line += Math.random() < 0.5 ? "0" : "1";
         }
-        body.innerHTML += line + "<br>";
+        lines.push(line);
 
-        // keep last 100 lines only
-        const lines = body.innerHTML.split("<br>");
-        if (lines.length > 100) {
-          body.innerHTML = lines.slice(-100).join("<br>");
-        }
+        const maxLines = Math.floor(window.innerHeight / 16);
+        if (lines.length > maxLines) lines.shift();
+
+        out.textContent = lines.join("\n");
       }
 
-      // run every 100ms
-      setInterval(drawline, 100);
+      let interval;
+
+      // Start fullscreen on button click (user gesture required)
+      startBtn.addEventListener("click", () => {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) { // Safari
+          document.documentElement.webkitRequestFullscreen();
+        }
+
+        interval = setInterval(drawline, 100);
+        startBtn.style.display = "none";
+      });
+
+      // Optional: redraw on resize
+      window.addEventListener("resize", drawline);
     </script>
   </body>
 </html>
