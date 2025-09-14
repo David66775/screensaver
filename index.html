@@ -57,7 +57,6 @@
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       for (let i = 0; i < lines.length; i++) {
         // Slight random horizontal shift for burn-in prevention
         const xOffset = Math.floor(Math.random() * 3); // 0-2 px shift
