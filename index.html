@@ -28,7 +28,7 @@
   canvas {
     display: none; /* hide until started */
   }
-  .inviscursor {
+  .nc {
     cursor: none;
   }
   .non-invis {
@@ -96,7 +96,7 @@ function startScreensaver() {
   startBtn.style.display = 'none';
   canvas.style.display = 'block';
   rootel.removeAttribute("class");
-  rootel.setAttribute("class", "inviscursor");
+  rootel.setAttribute("class", "nc");
   // Resize canvas
   resize();
   window.addEventListener('resize', resize);
