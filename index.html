@@ -12,6 +12,8 @@
         white-space: pre; /* keep formatting */
       }
       #output {
+        margin: 0;
+        object-fit: cover;
         font-size: 14px;
         line-height: 16px;
       }
@@ -25,7 +27,7 @@
 
       function drawline() {
         let line = "";
-        for (let i = 0; i < 166; i++) {
+        for (let i = 0; i < 175; i++) {
           line += Math.random() < 0.5 ? "0" : "1";
         }
         outel.innerHTML += line + "<br>";
