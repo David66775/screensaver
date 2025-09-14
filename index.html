@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Binary Screensaver Overnight-Safe</title>
+<title>Binary Screensaver Fullscreen</title>
 <style>
   html, body {
     margin: 0;
@@ -11,30 +11,46 @@
     height: 100%;
     overflow: hidden;
     background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: monospace;
+  }
+  #startBtn {
+    padding: 20px 40px;
+    font-size: 24px;
+    cursor: pointer;
+    background: #00ff00;
+    border: none;
+    border-radius: 8px;
   }
   canvas {
-    display: block;
+    display: none; /* hide until started */
   }
 </style>
 </head>
 <body>
+<button id="startBtn">Start Fullscreen</button>
 <canvas id="screen"></canvas>
+
 <script>
 const canvas = document.getElementById('screen');
 const ctx = canvas.getContext('2d');
+const startBtn = document.getElementById('startBtn');
 
 let width, height;
 let fontSize = 16;
 let lines;
-const columns = 200;      // fixed number of characters per line
-let buffer = [];           // declare buffer BEFORE calling resize/initBuffer()
+const columns = 200;
+let buffer = [];
+let lastUpdate = 0;
+const interval = 1000 / 10; // ~10 FPS
 
-// Initialize screen buffer
 function initBuffer() {
   buffer = Array(lines).fill('').map(() => Array(columns).fill(' '));
 }
 
-// Resize canvas and recalculate lines
 function resize() {
   width = canvas.width = window.innerWidth;
   height = canvas.height = window.innerHeight;
@@ -45,28 +61,19 @@ function resize() {
   initBuffer();
 }
 
-window.addEventListener('resize', resize);
-resize();
-
-// Draw the buffer on canvas
 function draw() {
   ctx.clearRect(0, 0, width, height);
   for (let y = 0; y < lines; y++) {
-    const xOffset = Math.floor(Math.random() * 3); // slight shift for burn-in prevention
+    const xOffset = Math.floor(Math.random() * 3); // slight shift for burn-in
     ctx.fillText(buffer[y].join(''), xOffset, y * fontSize);
   }
 }
 
-// Shift buffer upward and add new line at bottom
 function shiftBuffer() {
   buffer.shift();
   const newLine = Array(columns).fill(0).map(() => Math.random() < 0.5 ? '0' : '1');
   buffer.push(newLine);
 }
-
-// Main loop with throttled updates (~10 FPS, 6× slower than 60 FPS)
-let lastUpdate = 0;
-const interval = 1000 / 10; // 10 FPS
 
 function loop(timestamp) {
   if (timestamp - lastUpdate > interval) {
@@ -77,8 +84,30 @@ function loop(timestamp) {
   requestAnimationFrame(loop);
 }
 
-// Start animation loop
-requestAnimationFrame(loop);
+function startScreensaver() {
+  // Hide the button
+  startBtn.style.display = 'none';
+  canvas.style.display = 'block';
+  
+  // Resize canvas
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Request fullscreen
+  if (canvas.requestFullscreen) {
+    canvas.requestFullscreen();
+  } else if (canvas.webkitRequestFullscreen) {
+    canvas.webkitRequestFullscreen();
+  } else if (canvas.msRequestFullscreen) {
+    canvas.msRequestFullscreen();
+  }
+
+  // Start animation loop
+  requestAnimationFrame(loop);
+}
+
+// Start when button is clicked
+startBtn.addEventListener('click', startScreensaver);
 </script>
 </body>
 </html>
