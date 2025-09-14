@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <title>Binary Screensaver</title>
     <style>
       body {
         margin: 0;
-        background-color: black;
-        color: #00ff00; /* bright green */
+        background: black;
+        color: #00ff00; /* green text */
         font-family: monospace;
-        white-space: pre; /* preserve spacing/line breaks */
+        white-space: pre; /* keep formatting */
       }
       #output {
         font-size: 14px;
@@ -16,45 +18,26 @@
     </style>
   </head>
   <body>
-    <div id="output"></div>
+    <div id="output">Loading...</div>
+
     <script>
-      let wakeLock = null;
-      let outel = document.getElementById("output");
+      const outel = document.getElementById("output");
 
-      // Wake Lock
-      async function requestWakeLock() {
-        try {
-          if ('wakeLock' in navigator) {
-            wakeLock = await navigator.wakeLock.request('screen');
-            console.log('Wake lock is active.');
-            wakeLock.addEventListener('release', () => {
-              console.log('Wake lock was released.');
-            });
-          } else {
-            console.warn('Wake Lock API not supported in this browser.');
-          }
-        } catch (err) {
-          console.error(`${err.name}, ${err.message}`);
-        }
-      }
-      requestWakeLock();
-
-      // Generate one line of random 0/1
       function drawline() {
         let line = "";
-        for (let i = 0; i < 125; i++) {
+        for (let i = 0; i < 166; i++) {
           line += Math.random() < 0.5 ? "0" : "1";
         }
         outel.innerHTML += line + "<br>";
 
         // keep last 100 lines only
-        let lines = outel.innerHTML.split("<br>");
+        const lines = outel.innerHTML.split("<br>");
         if (lines.length > 100) {
           outel.innerHTML = lines.slice(-100).join("<br>");
         }
       }
 
-      // Run forever
+      // run every 100ms
       setInterval(drawline, 100);
     </script>
   </body>
