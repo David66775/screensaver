@@ -14,7 +14,7 @@
         margin: 0;
         white-space: pre;        /* keeps lines aligned */
       }
-      -::webkit-scrollbar {
+      ::webkit-scrollbar {
         display: none;
       }
     </style>
@@ -27,7 +27,7 @@
 
       function drawline() {
         let line = "";
-        for (let i = 0; i < 185; i++) {
+        for (let i = 0; i < 186; i++) {
           line += Math.random() < 0.5 ? "0" : "1";
         }
         body.innerHTML += line + "<br>";
