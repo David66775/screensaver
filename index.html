@@ -27,7 +27,14 @@ let width, height;
 let fontSize = 16;
 let lines;
 const columns = 200; // fixed number of characters per line
+let buffer = [];      // <-- declare buffer first to avoid initialization errors
 
+// Initialize the screen buffer
+function initBuffer() {
+  buffer = Array(lines).fill('').map(() => Array(columns).fill(' '));
+}
+
+// Resize canvas and recalculate lines
 function resize() {
   width = canvas.width = window.innerWidth;
   height = canvas.height = window.innerHeight;
@@ -41,12 +48,6 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// Initialize screen buffer
-let buffer = [];
-function initBuffer() {
-  buffer = Array(lines).fill('').map(() => Array(columns).fill(' '));
-}
-
 // Draw the buffer on canvas
 function draw() {
   ctx.clearRect(0, 0, width, height);
@@ -56,16 +57,16 @@ function draw() {
   }
 }
 
-// Shift buffer upward and add new line at bottom
+// Shift buffer upward and add a new line at the bottom
 function shiftBuffer() {
   buffer.shift();
   const newLine = Array(columns).fill(0).map(() => Math.random() < 0.5 ? '0' : '1');
   buffer.push(newLine);
 }
 
-// Main loop with throttled update (~6× slower)
+// Main loop with throttled updates (~10 FPS, 6× slower than 60 FPS)
 let lastUpdate = 0;
-const interval = 1000 / 10; // ~10 FPS
+const interval = 1000 / 10; // 10 FPS
 
 function loop(timestamp) {
   if (timestamp - lastUpdate > interval) {
@@ -76,6 +77,7 @@ function loop(timestamp) {
   requestAnimationFrame(loop);
 }
 
+// Start the loop
 requestAnimationFrame(loop);
 </script>
 </body>
