@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html id = "rootel">
+<html id = "rootel" class = "non-invis">
   <head>
     <meta charset="utf-8">
     <title>Binary Screensaver Fullscreen</title>
@@ -21,6 +21,9 @@
         font-size: 14px;
         line-height: 16px;
         margin: 0;
+      }
+      .non-invis {
+        cursor: auto;
       }
 
       ::-webkit-scrollbar {
@@ -68,6 +71,7 @@
 
         interval = setInterval(drawline, 50);
         startBtn.style.display = "none";
+        body.removeAttribute("class");
         body.setAttribute("class", "inviscursor");
       });
 
