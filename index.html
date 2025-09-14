@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html id = "rootel">
   <head>
     <meta charset="utf-8">
     <title>Binary Screensaver Fullscreen</title>
@@ -14,9 +14,6 @@
         color: #00ff00;
         font-family: monospace;
       }
-      div {
-        cursor: none;
-      }
       #main {
         width: 100%;
         height: 100%;
@@ -29,6 +26,9 @@
       ::-webkit-scrollbar {
         display: none;
       }
+      .inviscursor {
+        cursor: none;
+      }
     </style>
   </head>
   <body>
@@ -40,6 +40,7 @@
     <script>
       const out = document.getElementById("main");
       const startBtn = document.getElementById("startBtn");
+      const body = document.getElementById("rootel");
       const lines = [];
 
       function drawline() {
@@ -65,8 +66,9 @@
           document.documentElement.webkitRequestFullscreen();
         }
 
-        interval = setInterval(drawline, 10);
+        interval = setInterval(drawline, 50);
         startBtn.style.display = "none";
+        body.setAttribute("class", "inviscursor");
       });
 
       // Optional: redraw on resize
