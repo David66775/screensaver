@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html id = "rootel" class = "non-invis">
 <head>
 <meta charset="utf-8">
 <title>Binary Screensaver Fullscreen</title>
@@ -28,6 +28,12 @@
   canvas {
     display: none; /* hide until started */
   }
+  .inviscursor {
+    cursor: none;
+  }
+  .non-invis {
+    cursor: auto;
+  }
 </style>
 </head>
 <body>
@@ -38,7 +44,8 @@
 const canvas = document.getElementById('screen');
 const ctx = canvas.getContext('2d');
 const startBtn = document.getElementById('startBtn');
-
+const rootel = document.getElementById("rootel");
+  
 let width, height;
 let fontSize = 16;
 let lines;
@@ -88,7 +95,8 @@ function startScreensaver() {
   // Hide the button
   startBtn.style.display = 'none';
   canvas.style.display = 'block';
-  
+  rootel.removeAttribute("class");
+  rootel.setAttribute("class", "inviscursor");
   // Resize canvas
   resize();
   window.addEventListener('resize', resize);
