@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
+<title>Binary Screensaver Overnight-Safe</title>
 <style>
   html, body {
     margin: 0;
@@ -22,7 +23,11 @@
 const canvas = document.getElementById('screen');
 const ctx = canvas.getContext('2d');
 
-let width, height, fontSize = 16, lines;
+let width, height;
+let fontSize = 16;
+let lines;
+const columns = 200; // fixed number of characters per line
+
 function resize() {
   width = canvas.width = window.innerWidth;
   height = canvas.height = window.innerHeight;
@@ -30,33 +35,48 @@ function resize() {
   ctx.fillStyle = '#00ff00';
   ctx.textBaseline = 'top';
   lines = Math.ceil(height / fontSize);
+  initBuffer();
 }
+
 window.addEventListener('resize', resize);
 resize();
-lines = Math.ceil(height / fontSize);
-const columns = 200;
-let buffer = Array(lines).fill('').map(() => Array(columns).fill(' '));
 
+// Initialize screen buffer
+let buffer = [];
+function initBuffer() {
+  buffer = Array(lines).fill('').map(() => Array(columns).fill(' '));
+}
+
+// Draw the buffer on canvas
 function draw() {
   ctx.clearRect(0, 0, width, height);
   for (let y = 0; y < lines; y++) {
-    ctx.fillText(buffer[y].join(''), 0, y * fontSize);
+    const xOffset = Math.floor(Math.random() * 3); // slight shift for burn-in prevention
+    ctx.fillText(buffer[y].join(''), xOffset, y * fontSize);
   }
 }
 
+// Shift buffer upward and add new line at bottom
 function shiftBuffer() {
-  buffer.shift(); // remove top line
-  const newLine = Array(buffer[0].length).fill(0).map(() => Math.random() < 0.5 ? '0' : '1');
+  buffer.shift();
+  const newLine = Array(columns).fill(0).map(() => Math.random() < 0.5 ? '0' : '1');
   buffer.push(newLine);
 }
 
-function loop() {
-  shiftBuffer();
-  draw();
-  requestAnimationFrame(loop); // very low CPU compared to intervals
+// Main loop with throttled update (~6× slower)
+let lastUpdate = 0;
+const interval = 1000 / 10; // ~10 FPS
+
+function loop(timestamp) {
+  if (timestamp - lastUpdate > interval) {
+    shiftBuffer();
+    draw();
+    lastUpdate = timestamp;
+  }
+  requestAnimationFrame(loop);
 }
 
-loop();
+requestAnimationFrame(loop);
 </script>
 </body>
 </html>
