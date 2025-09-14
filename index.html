@@ -34,8 +34,7 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 lines = Math.ceil(height / fontSize);
-const charWidth = ctx.measureText('0').width;   // measure actual width of one character
-const columns = Math.floor(width / charWidth);  // correct number of characters per line
+const columns = 200;
 let buffer = Array(lines).fill('').map(() => Array(columns).fill(' '));
 
 function draw() {
