@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Binary Screensaver Fullscreen</title>
+  <title>Binary Screensaver Low CPU</title>
   <style>
     html, body {
       margin: 0;
@@ -12,12 +12,8 @@
       overflow: hidden;
       background: black;
     }
-    canvas {
-      display: block;
-    }
-    .inviscursor {
-      cursor: none;
-    }
+    canvas { display: block; }
+    .inviscursor { cursor: none; }
     #startBtn {
       position: absolute;
       top: 50%;
@@ -38,11 +34,12 @@
     const ctx = canvas.getContext('2d');
     const startBtn = document.getElementById('startBtn');
     let columns, yPositions;
+    const fontSize = 14;
+    let interval;
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      const fontSize = 14;
       columns = Math.floor(canvas.width / fontSize);
       yPositions = Array(columns).fill(0);
       ctx.font = fontSize + "px monospace";
@@ -51,22 +48,21 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    function draw() {
-      // Fade effect for smooth trails
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = "#00ff00";
-
+    function drawLineStep() {
+      ctx.fillStyle = "black";
       for (let i = 0; i < columns; i++) {
-        const text = Math.random() < 0.5 ? "0" : "1";
-        ctx.fillText(text, i * 14, yPositions[i]);
+        // Erase previous character
+        ctx.fillRect(i * fontSize, yPositions[i], fontSize, fontSize);
 
-        yPositions[i] += 16;
+        // Draw new character
+        ctx.fillStyle = "#00ff00";
+        const text = Math.random() < 0.5 ? "0" : "1";
+        ctx.fillText(text, i * fontSize, yPositions[i]);
+
+        // Move down
+        yPositions[i] += fontSize;
         if (yPositions[i] > canvas.height) yPositions[i] = 0;
       }
-
-      requestAnimationFrame(draw);
     }
 
     startBtn.addEventListener('click', () => {
@@ -77,7 +73,9 @@
       }
       startBtn.style.display = "none";
       document.body.classList.add("inviscursor");
-      draw();
+
+      // Update only every 200ms → near-zero CPU
+      interval = setInterval(drawLineStep, 200);
     });
   </script>
 </body>
