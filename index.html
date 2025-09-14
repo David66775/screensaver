@@ -44,7 +44,7 @@
 
       // Compute dynamic columns and rows based on font size
       columns = 200;
-      rows = Math.floor(canvas.height / fontSize);
+      rows = Math.floor(canvas.height / fontSize + 5);
 
       // Initialize the screen with random binary lines
       lines = Array(rows).fill('').map(() => generateLine());
