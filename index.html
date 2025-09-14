@@ -33,9 +33,10 @@ function resize() {
 }
 window.addEventListener('resize', resize);
 resize();
-
-// Initialize screen buffer
-let buffer = Array(lines).fill('').map(() => Array(Math.floor(width / fontSize)).fill(' '));
+lines = Math.ceil(height / fontSize);
+const charWidth = ctx.measureText('0').width;   // measure actual width of one character
+const columns = Math.floor(width / charWidth);  // correct number of characters per line
+let buffer = Array(lines).fill('').map(() => Array(columns).fill(' '));
 
 function draw() {
   ctx.clearRect(0, 0, width, height);
