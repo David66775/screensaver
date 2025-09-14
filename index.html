@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
-    #output {
+    <style>
+      #output {
       object-fit: cover;
+        background-color: black;
     }
+    </style>
   </head>
   <body>
-    <pre id = "output"></pre>
+    <p id = "output"></p>
     <script>
 let wakeLock = null;
 let outel = document.getElementById("output");
