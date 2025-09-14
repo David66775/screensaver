@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Binary Screensaver Low CPU</title>
+  <title>Binary Screensaver Fullscreen</title>
   <style>
     html, body {
       margin: 0;
@@ -33,37 +33,43 @@
     const canvas = document.getElementById('screen');
     const ctx = canvas.getContext('2d');
     const startBtn = document.getElementById('startBtn');
-    let columns, yPositions;
     const fontSize = 14;
+    let columns, rows;
+    let lines = [];
     let interval;
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      columns = Math.floor(canvas.width / fontSize);
-      yPositions = Array(columns).fill(0);
+      columns = 200; // fixed characters per line
+      rows = Math.floor(canvas.height / fontSize);
+      lines = Array(rows).fill('').map(() => generateLine());
       ctx.font = fontSize + "px monospace";
+      ctx.fillStyle = "#00ff00";
+    }
+
+    function generateLine() {
+      let line = '';
+      for (let i = 0; i < columns; i++) {
+        line += Math.random() < 0.5 ? '0' : '1';
+      }
+      return line;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < lines.length; i++) {
+        ctx.fillText(lines[i], 0, i * fontSize);
+      }
+
+      // Add new line at the bottom and remove top line
+      lines.push(generateLine());
+      if (lines.length > rows) lines.shift();
     }
 
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
-
-    function drawLineStep() {
-      ctx.fillStyle = "black";
-      for (let i = 0; i < columns; i++) {
-        // Erase previous character
-        ctx.fillRect(i * fontSize, yPositions[i], fontSize, fontSize);
-
-        // Draw new character
-        ctx.fillStyle = "#00ff00";
-        const text = Math.random() < 0.5 ? "0" : "1";
-        ctx.fillText(text, i * fontSize, yPositions[i]);
-
-        // Move down
-        yPositions[i] += fontSize;
-        if (yPositions[i] > canvas.height) yPositions[i] = 0;
-      }
-    }
 
     startBtn.addEventListener('click', () => {
       if (document.documentElement.requestFullscreen) {
@@ -74,8 +80,8 @@
       startBtn.style.display = "none";
       document.body.classList.add("inviscursor");
 
-      // Update only every 200ms → near-zero CPU
-      interval = setInterval(drawLineStep, 200);
+      // Draw every 100ms (same speed as original) → still very low CPU
+      interval = setInterval(draw, 100);
     });
   </script>
 </body>
