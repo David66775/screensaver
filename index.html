@@ -1,82 +1,84 @@
 <!DOCTYPE html>
-<html id = "rootel" class = "non-invis">
-  <head>
-    <meta charset="utf-8">
-    <title>Binary Screensaver Fullscreen</title>
-    <style>
-      html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        background: black;
-        color: #00ff00;
-        font-family: monospace;
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Binary Screensaver Fullscreen</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: black;
+    }
+    canvas {
+      display: block;
+    }
+    .inviscursor {
+      cursor: none;
+    }
+    #startBtn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 20px;
+      padding: 10px 20px;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="screen"></canvas>
+  <button id="startBtn">Start Fullscreen</button>
+
+  <script>
+    const canvas = document.getElementById('screen');
+    const ctx = canvas.getContext('2d');
+    const startBtn = document.getElementById('startBtn');
+    let columns, yPositions;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const fontSize = 14;
+      columns = Math.floor(canvas.width / fontSize);
+      yPositions = Array(columns).fill(0);
+      ctx.font = fontSize + "px monospace";
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function draw() {
+      // Fade effect for smooth trails
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#00ff00";
+
+      for (let i = 0; i < columns; i++) {
+        const text = Math.random() < 0.5 ? "0" : "1";
+        ctx.fillText(text, i * 14, yPositions[i]);
+
+        yPositions[i] += 16;
+        if (yPositions[i] > canvas.height) yPositions[i] = 0;
       }
-      #main {
-        width: 100%;
-        height: 100%;
-        white-space: pre;
-        font-size: 14px;
-        line-height: 16px;
-        margin: 0;
+
+      requestAnimationFrame(draw);
+    }
+
+    startBtn.addEventListener('click', () => {
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      } else if (document.documentElement.webkitRequestFullscreen) {
+        document.documentElement.webkitRequestFullscreen();
       }
-      .non-invis {
-        cursor: auto;
-      }
-
-      ::-webkit-scrollbar {
-        display: none;
-      }
-      .inviscursor {
-        cursor: none;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="main"></div>
-    <button id="startBtn" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;padding:10px 20px;">
-      Start Fullscreen
-    </button>
-
-    <script>
-      const out = document.getElementById("main");
-      const startBtn = document.getElementById("startBtn");
-      const body = document.getElementById("rootel");
-      const lines = [];
-
-      function drawline() {
-        let line = "";
-        for (let i = 0; i < 200; i++) {
-          line += Math.random() < 0.5 ? "0" : "1";
-        }
-        lines.push(line);
-
-        const maxLines = Math.floor(window.innerHeight / 16);
-        if (lines.length > maxLines) lines.shift();
-
-        out.textContent = lines.join("\n");
-      }
-
-      let interval;
-
-      // Start fullscreen on button click (user gesture required)
-      startBtn.addEventListener("click", () => {
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen();
-        } else if (document.documentElement.webkitRequestFullscreen) { // Safari
-          document.documentElement.webkitRequestFullscreen();
-        }
-
-        interval = setInterval(drawline, 100);
-        startBtn.style.display = "none";
-        body.removeAttribute("class");
-        body.setAttribute("class", "inviscursor");
-      });
-
-      // Optional: redraw on resize
-      window.addEventListener("resize", drawline);
-    </script>
-  </body>
+      startBtn.style.display = "none";
+      document.body.classList.add("inviscursor");
+      draw();
+    });
+  </script>
+</body>
 </html>
