@@ -4,16 +4,17 @@
     <meta charset="utf-8">
     <title>Binary Screensaver</title>
     <style>
-      body {
+      #main {
         margin: 0;
         background: black;
         color: #00ff00; /* green text */
         font-family: monospace;
+        object-fit: cover;
       }
     </style>
   </head>
-  <body id = "main">
-    
+  <body>
+    <div id = "main"></div>
 
     <script>
 let body = document.getElementById("main");
@@ -25,7 +26,7 @@ let body = document.getElementById("main");
         body.innerHTML += line + "<br>";
 
         // keep last 100 lines only
-        const lines = outel.innerHTML.split("<br>");
+        const lines = body.innerHTML.split("<br>");
         if (lines.length > 100) {
           body.innerHTML = lines.slice(-100).join("<br>");
         }
